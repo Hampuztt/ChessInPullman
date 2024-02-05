@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+/build/
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.make
+
+# Editor and IDE directories
+.vscode/
+.idea/
+*.swp
+*~
