@@ -6,5 +6,7 @@ int main(int argc, char *argv[]) {
   ChessBoard gameboard;
   gameboard.loadFenBoard(start_fen);
   gameboard.printBoard();
+  gameboard.makeMove("e2", "e3");
+  // gameboard.makeMove
   return 0;
 }

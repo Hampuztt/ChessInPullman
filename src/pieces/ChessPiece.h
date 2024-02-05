@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 
-
 #include "Helpers.h"
+
 class ChessPiece {
  public:
   virtual ~ChessPiece() = default;

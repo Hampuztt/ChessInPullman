@@ -1,5 +1,11 @@
 #include "ChessBoard.h"
 
+#include <iostream>
+#include <ostream>
+#include <utility>
+
+#include "pieces/Helpers.h"
+
 ChessBoard::ChessBoard() {
   // Constructor
 }
@@ -20,7 +26,7 @@ void ChessBoard::printBoard() {
   std::cout << std::endl;
 }
 
-void ChessBoard::loadFenBoard(std::string fenString) {
+void ChessBoard::loadFenBoard(const std::string &fenString) {
   int x = 0, y = 0;
   for (char c : fenString) {
     if (isalpha(c)) {
@@ -41,6 +47,30 @@ void ChessBoard::loadFenBoard(std::string fenString) {
       std::cout << "Unknown Character ";
     }
   }
+}
+std::pair<int, int> ChessBoard::getPositionFromNotation(
+    const std::string &notation) {
+  if (!isValidNotation(notation)) {
+    return {-1, -1};
+  }
+  // Convert the letter (a-h) to x coordinate (0-7) and the number (1-8) to y
+  // coordinate (0-7)
+  int x = notation[0] - 'a';
+  int y = 8 - (notation[1] - '0');
+
+  return {x, y};
+}
+
+bool ChessBoard::makeMove(const std::string &from, const std::string &to) {
+  std::pair<int, int> moveFrom = getPositionFromNotation(from);
+  std::pair<int, int> moveTo = getPositionFromNotation(to);
+  // std::cout << "move FROM " << (std::string)moveFrom << "which was og " <<
+  // from << std::endl;
+  printf("notation from was %s which becomes index [%d %d]", from.c_str(),
+         moveFrom.first, moveFrom.second);
+  //  printf("move FROM %d which was og %d\n", moveFrom.first, moveFrom.second);
+
+  return true;
 }
 
 std::unique_ptr<ChessPiece> ChessBoard::buildChessPiece(char letter) {
