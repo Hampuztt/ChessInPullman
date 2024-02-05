@@ -4,8 +4,6 @@
 
 #include "ChessBoard.cpp"
 int main(int argc, char *argv[]) {
-  std::cout << "meow" << std::endl;
-  std::cout << "meow" << std::endl;
   std::string start_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
   ChessBoard gameboard = ChessBoard();
   gameboard.setUpBoard();
