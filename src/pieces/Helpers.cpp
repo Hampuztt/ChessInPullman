@@ -15,6 +15,7 @@ char Move::promotion() const { return promotion_; }
 
 bool isValidNotation(const std::string& notation) {
   if (notation.length() != 2) {
+    std::cout << "Notation length != 2 " << notation << std::endl;
     return false;
   }
 

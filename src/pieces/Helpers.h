@@ -1,11 +1,11 @@
 #ifndef HELPER_H
 #define HELPER_H
-
+#include <iostream>
+#include <ostream>
 #include <string>
 #include <utility>
 
-enum class Color { White, Black };
-
+enum class Color { White, Black, None };
 enum class MoveType { Normal, Capture, Castling, Promotion, EnPassant };
 
 class Move {

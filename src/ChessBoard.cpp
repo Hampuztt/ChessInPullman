@@ -1,9 +1,11 @@
 #include "ChessBoard.h"
 
 #include <iostream>
+#include <memory>
 #include <ostream>
 #include <utility>
 
+#include "pieces/Empty.h"
 #include "pieces/Helpers.h"
 
 ChessBoard::ChessBoard() {
@@ -51,24 +53,39 @@ void ChessBoard::loadFenBoard(const std::string &fenString) {
 std::pair<int, int> ChessBoard::getPositionFromNotation(
     const std::string &notation) {
   if (!isValidNotation(notation)) {
+    printf("Invalid move notation! %s", notation.c_str());
     return {-1, -1};
   }
   // Convert the letter (a-h) to x coordinate (0-7) and the number (1-8) to y
   // coordinate (0-7)
+  int offset = 1;
   int x = notation[0] - 'a';
-  int y = 8 - (notation[1] - '0');
-
+  int y = notation[1] - '0' - offset;
+  printf("Hello i got x = %d and y = %d", x, y);
   return {x, y};
 }
 
 bool ChessBoard::makeMove(const std::string &from, const std::string &to) {
   std::pair<int, int> moveFrom = getPositionFromNotation(from);
   std::pair<int, int> moveTo = getPositionFromNotation(to);
+  if ((moveTo.first == -1 && moveTo.second == -1) ||
+      (moveFrom.first == -1 && moveFrom.second == -1)) {
+    return false;
+  }
   // std::cout << "move FROM " << (std::string)moveFrom << "which was og " <<
   // from << std::endl;
-  printf("notation from was %s which becomes index [%d %d]", from.c_str(),
-         moveFrom.first, moveFrom.second);
-  //  printf("move FROM %d which was og %d\n", moveFrom.first, moveFrom.second);
+  auto &chosen_piece_ptr = gameBoard[moveFrom.second][moveFrom.first];
+  auto &target_piece_ptr = gameBoard[moveTo.second][moveTo.first];
+
+  // Prevent moving onto a piece of the same color
+  if (chosen_piece_ptr->color_ == target_piece_ptr->color_ or
+      chosen_piece_ptr->symbol() == '.') {
+    return false;
+  }
+
+  target_piece_ptr = std::move(chosen_piece_ptr);
+
+  chosen_piece_ptr = std::make_unique<Empty>(Color::None);
 
   return true;
 }
@@ -94,7 +111,7 @@ std::unique_ptr<ChessPiece> ChessBoard::buildChessPiece(char letter) {
     case 'p':
       return std::make_unique<Pawn>(pieceColor);
     case '.':
-      return std::make_unique<Empty>(pieceColor);
+      return std::make_unique<Empty>(Color::None);
   }
   throw std::invalid_argument("Invalid input character: " +
                               std::string(1, letter));

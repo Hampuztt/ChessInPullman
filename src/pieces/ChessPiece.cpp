@@ -1,7 +1,5 @@
 #include "ChessPiece.h"
 
-#include <cctype>
-
 ChessPiece::ChessPiece(Color color) : color_(color) {}
 
 // placeholder
