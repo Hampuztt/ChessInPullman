@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
       std::cout << "Invalid move, try again." << std::endl;
     }
 
-    std::cout << "\033[2J\033[1;1H" << std::endl;
+    // std::cout << "\033[2J\033[1;1H" << std::endl;
     gameboard.printBoard();
   }
 

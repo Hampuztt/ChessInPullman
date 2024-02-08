@@ -8,10 +8,11 @@ std::vector<Move> Pawn::generateMoves(std::pair<int, int> position) {
   int startRow = (color_ == Color::White) ? 1 : 6;
 
   addMove(result, position, 0, 1 * direction);
-
   bool pawnInStartPosition = position.second == 1 or position.second == 6;
   if (position.second == startRow) {
     addMove(result, position, 0, 2 * direction);
   }
+  addMove(result, position, 1, 1, MoveCondition::PawnCapture);
+  addMove(result, position, -1, 1, MoveCondition::PawnCapture);
   return result;
 };

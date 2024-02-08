@@ -1,12 +1,8 @@
 #include "ChessBoard.h"
 
 #include <iostream>
-#include <memory>
-#include <ostream>
-#include <utility>
 
-#include "pieces/Empty.h"
-#include "pieces/Helpers.h"
+#include "pieces/ChessPiece.h"
 
 ChessBoard::ChessBoard() {
   // Constructor
@@ -50,19 +46,64 @@ void ChessBoard::loadFenBoard(const std::string &fenString) {
     }
   }
 }
-std::pair<int, int> ChessBoard::getPositionFromNotation(
-    const std::string &notation) {
-  if (!isValidNotation(notation)) {
-    printf("Invalid move notation! %s", notation.c_str());
-    return {-1, -1};
+
+ChessPiece *ChessBoard::getPiece(std::pair<int, int> position) {
+  return gameBoard[position.second][position.first].get();
+}
+// Filters moves that are outside board & that would self capture
+void ChessBoard::filterInvalidMoves(std::vector<Move> &moves) {
+  std::vector<Move> validMoves;
+
+  for (const auto &move : moves) {
+    bool validPositions =
+        isValidPosition(move.from()) && isValidPosition(move.to());
+
+    bool notSamecolor =
+        getPiece(move.from())->color_ != getPiece(move.to())->color_;
+
+    if (validPositions &&
+        (notSamecolor or move.type() == MoveCondition::Castling)) {
+      validMoves.push_back(move);
+    }
   }
-  // Convert the letter (a-h) to x coordinate (0-7) and the number (1-8) to y
-  // coordinate (0-7)
-  int offset = 1;
-  int x = notation[0] - 'a';
-  int y = notation[1] - '0' - offset;
-  printf("Hello i got x = %d and y = %d", x, y);
-  return {x, y};
+  moves = validMoves;
+}
+
+bool ChessBoard::isPawnCapture(Move move) {
+  ChessPiece *toPiece = getPiece(move.to());
+  return toPiece->symbol() != '.';
+}
+
+std::vector<Move> ChessBoard::getLegalPieceMoves(ChessPiece *piece,
+                                                 std::pair<int, int> position) {
+  std::vector<Move> possibleMoves = piece->generateMoves(position);
+  filterInvalidMoves(possibleMoves);
+
+  std::vector<Move> legalMoves = {};
+
+  // We can now assume our moves won't make program crash
+  for (auto &move : possibleMoves) {
+    switch (move.type()) {
+      case MoveCondition::None:
+        legalMoves.push_back(move);
+      case MoveCondition::PawnCapture:
+        if (isPawnCapture(move)) {
+          legalMoves.push_back(move);
+        }
+        legalMoves.push_back(move);
+      case MoveCondition::Castling:
+      case MoveCondition::Promotion:
+      case MoveCondition::EnPassant:
+        break;
+    };
+  }
+
+  for (auto &move : legalMoves) {
+    std::cout << "Legal Move: From (" << move.from().first << ", "
+              << move.from().second << ") To (" << move.to().first << ", "
+              << move.to().second << ")\n";
+  }
+  return legalMoves;
 }
 
 bool ChessBoard::makeMove(const std::string &from, const std::string &to) {
@@ -82,6 +123,8 @@ bool ChessBoard::makeMove(const std::string &from, const std::string &to) {
       chosen_piece_ptr->symbol() == '.') {
     return false;
   }
+
+  getLegalPieceMoves(chosen_piece_ptr.get(), moveFrom);
 
   target_piece_ptr = std::move(chosen_piece_ptr);
 

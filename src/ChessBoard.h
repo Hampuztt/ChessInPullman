@@ -1,6 +1,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <cctype>
 #include <iostream>
@@ -31,7 +32,10 @@ class ChessBoard {
 
  private:
   std::array<std::array<std::unique_ptr<ChessPiece>, 8>, 8> gameBoard;
-
-  std::pair<int, int> getPositionFromNotation(const std::string &notation);
+  std::vector<Move> getLegalPieceMoves(ChessPiece *piece,
+                                       std::pair<int, int> position);
   std::unique_ptr<ChessPiece> buildChessPiece(char letter);
+  bool isPawnCapture(Move move);
+  void filterInvalidMoves(std::vector<Move> &moves);
+  ChessPiece *getPiece(std::pair<int, int> position);
 };

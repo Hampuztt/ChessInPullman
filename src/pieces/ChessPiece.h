@@ -14,5 +14,5 @@ class ChessPiece {
 
  protected:
   void addMove(std::vector<Move>& moves, std::pair<int, int> position, int dx,
-               int dy) const;
+               int dy, MoveCondition movetype = MoveCondition::None) const;
 };
